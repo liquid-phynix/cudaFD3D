@@ -102,20 +102,57 @@ struct Simulation {
 
 Simulation* g_sim = NULL;
 
-
-#define LAPLACE(sm, o) \
+//#define LAPLACE(sm, o) \
    ( sm[x + ox + 0 + o][y + oy + 1 + o][z + oz + 1 + o] + sm[x + ox + 2 + o][y + oy + 1 + o][z + oz + 1 + o] \
    + sm[x + ox + 1 + o][y + oy + 0 + o][z + oz + 1 + o] + sm[x + ox + 1 + o][y + oy + 2 + o][z + oz + 1 + o] \
    + sm[x + ox + 1 + o][y + oy + 1 + o][z + oz + 0 + o] + sm[x + ox + 1 + o][y + oy + 1 + o][z + oz + 2 + o] \
    - 6.0f * sm[x + ox + 1 + o][y + oy + 1 + o][z + oz + 1 + o])
+// [-6, 1, 0, 0]
+// [center, facecenters, edgecenters, corners]
+
+#define LAPLACE(sm, o) (\
+     0.1666666666f * ( sm[x + ox + 0 + o][y + oy + 0 + o][z + oz + 1 + o] + sm[x + ox + 0 + o][y + oy + 2 + o][z + oz + 1 + o]  \
+                     + sm[x + ox + 2 + o][y + oy + 2 + o][z + oz + 1 + o] + sm[x + ox + 2 + o][y + oy + 0 + o][z + oz + 1 + o]  \
+                     + sm[x + ox + 0 + o][y + oy + 1 + o][z + oz + 0 + o] + sm[x + ox + 0 + o][y + oy + 1 + o][z + oz + 2 + o]  \
+                     + sm[x + ox + 2 + o][y + oy + 1 + o][z + oz + 2 + o] + sm[x + ox + 2 + o][y + oy + 1 + o][z + oz + 0 + o]  \
+                     + sm[x + ox + 1 + o][y + oy + 0 + o][z + oz + 0 + o] + sm[x + ox + 1 + o][y + oy + 0 + o][z + oz + 2 + o]  \
+                     + sm[x + ox + 1 + o][y + oy + 2 + o][z + oz + 2 + o] + sm[x + ox + 1 + o][y + oy + 2 + o][z + oz + 0 + o]) \
+                                                                                                                                \
+   + 0.3333333333f * ( sm[x + ox + 0 + o][y + oy + 1 + o][z + oz + 1 + o] + sm[x + ox + 2 + o][y + oy + 1 + o][z + oz + 1 + o]  \
+                     + sm[x + ox + 1 + o][y + oy + 0 + o][z + oz + 1 + o] + sm[x + ox + 1 + o][y + oy + 2 + o][z + oz + 1 + o]  \
+                     + sm[x + ox + 1 + o][y + oy + 1 + o][z + oz + 0 + o] + sm[x + ox + 1 + o][y + oy + 1 + o][z + oz + 2 + o]) \
+                                                                                                                                \
+   -          4.0f *   sm[x + ox + 1 + o][y + oy + 1 + o][z + oz + 1 + o])
+// [-4, 1/3, 2/3, 0]
+// [center, facecenters, edgecenters, corners]
+
+//#define LAPLACE(sm, o) (\
+     0.0208333333f * ( sm[x + ox + 0 + o][y + oy + 0 + o][z + oz + 0 + o] + sm[x + ox + 0 + o][y + oy + 0 + o][z + oz + 2 + o]  \
+                     + sm[x + ox + 0 + o][y + oy + 2 + o][z + oz + 0 + o] + sm[x + ox + 2 + o][y + oy + 0 + o][z + oz + 0 + o]  \
+                     + sm[x + ox + 0 + o][y + oy + 2 + o][z + oz + 2 + o] + sm[x + ox + 2 + o][y + oy + 0 + o][z + oz + 2 + o]  \
+                     + sm[x + ox + 2 + o][y + oy + 2 + o][z + oz + 0 + o] + sm[x + ox + 2 + o][y + oy + 2 + o][z + oz + 2 + o]) \
+                                                                                                                                \
+   + 0.125f *        ( sm[x + ox + 0 + o][y + oy + 0 + o][z + oz + 1 + o] + sm[x + ox + 0 + o][y + oy + 2 + o][z + oz + 1 + o]  \
+                     + sm[x + ox + 2 + o][y + oy + 2 + o][z + oz + 1 + o] + sm[x + ox + 2 + o][y + oy + 0 + o][z + oz + 1 + o]  \
+                     + sm[x + ox + 0 + o][y + oy + 1 + o][z + oz + 0 + o] + sm[x + ox + 0 + o][y + oy + 1 + o][z + oz + 2 + o]  \
+                     + sm[x + ox + 2 + o][y + oy + 1 + o][z + oz + 2 + o] + sm[x + ox + 2 + o][y + oy + 1 + o][z + oz + 0 + o]  \
+                     + sm[x + ox + 1 + o][y + oy + 0 + o][z + oz + 0 + o] + sm[x + ox + 1 + o][y + oy + 0 + o][z + oz + 2 + o]  \
+                     + sm[x + ox + 1 + o][y + oy + 2 + o][z + oz + 2 + o] + sm[x + ox + 1 + o][y + oy + 2 + o][z + oz + 0 + o]) \
+                                                                                                                                \
+   + 0.4166666666f * ( sm[x + ox + 0 + o][y + oy + 1 + o][z + oz + 1 + o] + sm[x + ox + 2 + o][y + oy + 1 + o][z + oz + 1 + o]  \
+                     + sm[x + ox + 1 + o][y + oy + 0 + o][z + oz + 1 + o] + sm[x + ox + 1 + o][y + oy + 2 + o][z + oz + 1 + o]  \
+                     + sm[x + ox + 1 + o][y + oy + 1 + o][z + oz + 0 + o] + sm[x + ox + 1 + o][y + oy + 1 + o][z + oz + 2 + o]) \
+                                                                                                                                \
+   - 4.166666666666f * sm[x + ox + 1 + o][y + oy + 1 + o][z + oz + 1 + o])
+// [-25/6, 5/12, 1/8, 1/48]
+// [center, facecenters, edgecenters, corners]
 
 __global__ void kernel_fill(float* in, float* out, int sx, int sy, int sz, float ddm2, float dt, float eps){
 
     __shared__ float cache     [14][14][14];
     __shared__ float cache_lap [14][14][14]; // 12x12x12
     __shared__ float cache_lap2[14][14][14]; // 10x10x10
-    __shared__ float cache_lap3[14][14][14]; //  8x 8x 8
-
+    __shared__ float cache_lap3[14][14][14]; //  8x 8x 8 
     int sq14 = 14 * 14;
 
     int x = threadIdx.x;
@@ -140,7 +177,6 @@ __global__ void kernel_fill(float* in, float* out, int sx, int sy, int sz, float
 
     __syncthreads();
     // cache is filled now
-
     // ********************************************************************************
     // compute lap  
     // phase 0,0,0
@@ -151,6 +187,7 @@ __global__ void kernel_fill(float* in, float* out, int sx, int sy, int sz, float
 //         + cache[x + ox + 1][y + oy + 0][z + oz + 1] + cache[x + ox + 1][y + oy + 2][z + oz + 1]
 //         + cache[x + ox + 1][y + oy + 1][z + oz + 0] + cache[x + ox + 1][y + oy + 1][z + oz + 2]
 //         - 6.0f * cache[x + ox + 1][y + oy + 1][z + oz + 1]);
+//        cache_lap[x + ox + 1][y + oy + 1][z + oz + 1] = ddm2 * LAPLACE(cache, 0);
     __syncthreads();
     // phase x,0,0
     ox = 8; oy = 0; oz = 0;
@@ -161,6 +198,7 @@ __global__ void kernel_fill(float* in, float* out, int sx, int sy, int sz, float
              + cache[x + ox + 1][y + oy + 0][z + oz + 1] + cache[x + ox + 1][y + oy + 2][z + oz + 1]
              + cache[x + ox + 1][y + oy + 1][z + oz + 0] + cache[x + ox + 1][y + oy + 1][z + oz + 2]
              - 6.0f * cache[x + ox + 1][y + oy + 1][z + oz + 1]);
+        //cache_lap[x + ox + 1][y + oy + 1][z + oz + 1] = ddm2 * LAPLACE(cache, 0);
     }
     __syncthreads();
     // phase 0,y,0
@@ -172,6 +210,7 @@ __global__ void kernel_fill(float* in, float* out, int sx, int sy, int sz, float
              + cache[x + ox + 1][y + oy + 0][z + oz + 1] + cache[x + ox + 1][y + oy + 2][z + oz + 1]
              + cache[x + ox + 1][y + oy + 1][z + oz + 0] + cache[x + ox + 1][y + oy + 1][z + oz + 2]
              - 6.0f * cache[x + ox + 1][y + oy + 1][z + oz + 1]);
+        //cache_lap[x + ox + 1][y + oy + 1][z + oz + 1] = ddm2 * LAPLACE(cache, 0);
     }
     __syncthreads();
     // phase 0,0,z
@@ -183,6 +222,7 @@ __global__ void kernel_fill(float* in, float* out, int sx, int sy, int sz, float
              + cache[x + ox + 1][y + oy + 0][z + oz + 1] + cache[x + ox + 1][y + oy + 2][z + oz + 1]
              + cache[x + ox + 1][y + oy + 1][z + oz + 0] + cache[x + ox + 1][y + oy + 1][z + oz + 2]
              - 6.0f * cache[x + ox + 1][y + oy + 1][z + oz + 1]);
+        //cache_lap[x + ox + 1][y + oy + 1][z + oz + 1] = ddm2 * LAPLACE(cache, 0);
     }
     __syncthreads();
     // phase x,y,0
@@ -194,6 +234,7 @@ __global__ void kernel_fill(float* in, float* out, int sx, int sy, int sz, float
              + cache[x + ox + 1][y + oy + 0][z + oz + 1] + cache[x + ox + 1][y + oy + 2][z + oz + 1]
              + cache[x + ox + 1][y + oy + 1][z + oz + 0] + cache[x + ox + 1][y + oy + 1][z + oz + 2]
              - 6.0f * cache[x + ox + 1][y + oy + 1][z + oz + 1]);
+        //cache_lap[x + ox + 1][y + oy + 1][z + oz + 1] = ddm2 * LAPLACE(cache, 0);
     }
     __syncthreads();
     // phase x,0,z
@@ -205,6 +246,7 @@ __global__ void kernel_fill(float* in, float* out, int sx, int sy, int sz, float
              + cache[x + ox + 1][y + oy + 0][z + oz + 1] + cache[x + ox + 1][y + oy + 2][z + oz + 1]
              + cache[x + ox + 1][y + oy + 1][z + oz + 0] + cache[x + ox + 1][y + oy + 1][z + oz + 2]
              - 6.0f * cache[x + ox + 1][y + oy + 1][z + oz + 1]);
+        //cache_lap[x + ox + 1][y + oy + 1][z + oz + 1] = ddm2 * LAPLACE(cache, 0);
     }
     __syncthreads();
     // phase 0,y,z
@@ -216,6 +258,7 @@ __global__ void kernel_fill(float* in, float* out, int sx, int sy, int sz, float
              + cache[x + ox + 1][y + oy + 0][z + oz + 1] + cache[x + ox + 1][y + oy + 2][z + oz + 1]
              + cache[x + ox + 1][y + oy + 1][z + oz + 0] + cache[x + ox + 1][y + oy + 1][z + oz + 2]
              - 6.0f * cache[x + ox + 1][y + oy + 1][z + oz + 1]);
+        //cache_lap[x + ox + 1][y + oy + 1][z + oz + 1] = ddm2 * LAPLACE(cache, 0);
     }
     __syncthreads();
     // phase x,y,z
@@ -227,6 +270,7 @@ __global__ void kernel_fill(float* in, float* out, int sx, int sy, int sz, float
              + cache[x + ox + 1][y + oy + 0][z + oz + 1] + cache[x + ox + 1][y + oy + 2][z + oz + 1]
              + cache[x + ox + 1][y + oy + 1][z + oz + 0] + cache[x + ox + 1][y + oy + 1][z + oz + 2]
              - 6.0f * cache[x + ox + 1][y + oy + 1][z + oz + 1]);
+        //cache_lap[x + ox + 1][y + oy + 1][z + oz + 1] = ddm2 * LAPLACE(cache, 0);
     }
     __syncthreads();
     // ********************************************************************************
@@ -242,6 +286,7 @@ __global__ void kernel_fill(float* in, float* out, int sx, int sy, int sz, float
 //         + cache_lap[x + ox + 2][y + oy + 1][z + oz + 2] + cache_lap[x + ox + 2][y + oy + 3][z + oz + 2]
 //         + cache_lap[x + ox + 2][y + oy + 2][z + oz + 1] + cache_lap[x + ox + 2][y + oy + 2][z + oz + 3]
 //         - 6.0f * cache_lap[x + ox + 2][y + oy + 2][z + oz + 2] );
+    //cache_lap2[x + ox + 2][y + oy + 2][z + oz + 2] = ddm2 * LAPLACE(cache_lap, 1);
     __syncthreads();
     // phase x,0,0
     ox = 8; oy = 0; oz = 0;
@@ -252,6 +297,7 @@ __global__ void kernel_fill(float* in, float* out, int sx, int sy, int sz, float
              + cache_lap[x + ox + 2][y + oy + 1][z + oz + 2] + cache_lap[x + ox + 2][y + oy + 3][z + oz + 2]
              + cache_lap[x + ox + 2][y + oy + 2][z + oz + 1] + cache_lap[x + ox + 2][y + oy + 2][z + oz + 3]
              - 6.0f * cache_lap[x + ox + 2][y + oy + 2][z + oz + 2] );
+        //cache_lap2[x + ox + 2][y + oy + 2][z + oz + 2] = ddm2 * LAPLACE(cache_lap, 1);
     }
     __syncthreads();
     // phase 0,y,0
@@ -263,6 +309,7 @@ __global__ void kernel_fill(float* in, float* out, int sx, int sy, int sz, float
              + cache_lap[x + ox + 2][y + oy + 1][z + oz + 2] + cache_lap[x + ox + 2][y + oy + 3][z + oz + 2]
              + cache_lap[x + ox + 2][y + oy + 2][z + oz + 1] + cache_lap[x + ox + 2][y + oy + 2][z + oz + 3]
              - 6.0f * cache_lap[x + ox + 2][y + oy + 2][z + oz + 2] );
+        //cache_lap2[x + ox + 2][y + oy + 2][z + oz + 2] = ddm2 * LAPLACE(cache_lap, 1);
     }
     __syncthreads();
     // phase 0,0,z
@@ -274,6 +321,7 @@ __global__ void kernel_fill(float* in, float* out, int sx, int sy, int sz, float
              + cache_lap[x + ox + 2][y + oy + 1][z + oz + 2] + cache_lap[x + ox + 2][y + oy + 3][z + oz + 2]
              + cache_lap[x + ox + 2][y + oy + 2][z + oz + 1] + cache_lap[x + ox + 2][y + oy + 2][z + oz + 3]
              - 6.0f * cache_lap[x + ox + 2][y + oy + 2][z + oz + 2] );
+        //cache_lap2[x + ox + 2][y + oy + 2][z + oz + 2] = ddm2 * LAPLACE(cache_lap, 1);
     }
     __syncthreads();
     // phase x,y,0
@@ -318,6 +366,25 @@ __global__ void kernel_fill(float* in, float* out, int sx, int sy, int sz, float
              + cache_lap[x + ox + 2][y + oy + 1][z + oz + 2] + cache_lap[x + ox + 2][y + oy + 3][z + oz + 2]
              + cache_lap[x + ox + 2][y + oy + 2][z + oz + 1] + cache_lap[x + ox + 2][y + oy + 2][z + oz + 3]
              - 6.0f * cache_lap[x + ox + 2][y + oy + 2][z + oz + 2] );
+        //cache_lap2[x + ox + 2][y + oy + 2][z + oz + 2] = ddm2 * LAPLACE(cache_lap, 1);
+    }
+    __syncthreads();
+    // phase x,0,z
+    ox = 8; oy = 0; oz = 8;
+    if(x < 2 && z < 2){
+        cache_lap2[x + ox + 2][y + oy + 2][z + oz + 2] = ddm2 * LAPLACE(cache_lap, 1);
+    }
+    __syncthreads();
+    // phase 0,y,z
+    ox = 0; oy = 8; oz = 8;
+    if(y < 2 && z < 2){
+        cache_lap2[x + ox + 2][y + oy + 2][z + oz + 2] = ddm2 * LAPLACE(cache_lap, 1);
+    }
+    __syncthreads();
+    // phase x,y,z
+    ox = 8; oy = 8; oz = 8;
+    if(x < 2 && y < 2 && z < 2){
+        cache_lap2[x + ox + 2][y + oy + 2][z + oz + 2] = ddm2 * LAPLACE(cache_lap, 1);
     }
     __syncthreads();
     // ********************************************************************************
@@ -331,6 +398,7 @@ __global__ void kernel_fill(float* in, float* out, int sx, int sy, int sz, float
 //         + cache_lap2[x + 3][y + 2][z + 3] + cache_lap2[x + 3][y + 4][z + 3]
 //         + cache_lap2[x + 3][y + 3][z + 2] + cache_lap2[x + 3][y + 3][z + 4]
 //         - 6.0f * cache_lap2[x + 3][y + 3][z + 3]);
+    //cache_lap3[x + 3][y + 3][z + 3] = ddm2 * LAPLACE(cache_lap2, 2);
     __syncthreads();
     // ********************************************************************************
 
