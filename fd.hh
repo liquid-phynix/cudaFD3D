@@ -6,8 +6,8 @@
 // #define BD_X 64
 // #define BD_Y 8
 // #define WRITEEVERY 100
-#define ITERS 10000
-#define SAVE 100
+#define ITERS 100000
+#define SAVE 1000
 // #define BCOND NFX
 // #define FTYPE FLOAT
 // #define ANISOTROPY NO
